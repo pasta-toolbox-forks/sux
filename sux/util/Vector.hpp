@@ -92,13 +92,13 @@ template <typename T, AllocType AT = MALLOC> class Vector : public Expandable {
 	T *data = nullptr;
 
   public:
-	Vector<T, AT>() = default;
+	Vector() = default;
 
-	explicit Vector<T, AT>(size_t length) { size(length); }
+	explicit Vector(size_t length) { size(length); }
 
-	explicit Vector<T, AT>(const T *data, size_t length) : Vector(length) { memcpy(this->data, data, length); }
+	explicit Vector(const T *data, size_t length) : Vector(length) { memcpy(this->data, data, length); }
 
-	~Vector<T, AT>() {
+	~Vector() {
 		if (data) {
 			if (AT == MALLOC) {
 				free(data);
@@ -114,7 +114,7 @@ template <typename T, AllocType AT = MALLOC> class Vector : public Expandable {
 	Vector &operator=(const Vector &) = delete;
 
 	// Define move operators
-	Vector(Vector<T, AT> &&oth) : _size(std::exchange(oth._size, 0)), _capacity(std::exchange(oth._capacity, 0)), data(std::exchange(oth.data, nullptr)) {}
+	Vector(Vector &&oth) : _size(std::exchange(oth._size, 0)), _capacity(std::exchange(oth._capacity, 0)), data(std::exchange(oth.data, nullptr)) {}
 
 	Vector<T, AT> &operator=(Vector<T, AT> &&oth) {
 		swap(*this, oth);
@@ -199,7 +199,7 @@ template <typename T, AllocType AT = MALLOC> class Vector : public Expandable {
 	 */
 	T popBack() { return data[--_size]; }
 
-	friend void swap(Vector<T, AT> &first, Vector<T, AT> &second) noexcept {
+	friend void swap(Vector &first, Vector &second) noexcept {
 		std::swap(first._size, second._size);
 		std::swap(first._capacity, second._capacity);
 		std::swap(first.data, second.data);
